@@ -601,51 +601,7 @@
             color: var(--texto-claro);
         }
 
-        /* --- 8. Pantalla de Carga (Estilos para la inicialización) --- */
-        .pantalla-carga {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario), var(--color-auxiliar));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.7s ease, visibility 0.7s ease;
-        }
-
-        .pantalla-carga.oculta {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .mensaje-carga {
-            color: white;
-            font-size: 1.5rem;
-            text-align: center;
-            margin-top: 20px;
-            font-family: 'Lora', serif;
-            z-index: 10;
-        }
-
-        .cargador {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: girar 1s linear infinite;
-        }
-
-        @keyframes girar {
-            to { transform: rotate(360deg); }
-        }
-
+       
         /* --- 9. Estilos para ejercicios --- */
         .ejercicio-activo {
             background: linear-gradient(135deg, var(--color-acento), var(--color-secundario));
@@ -728,11 +684,7 @@
     </style>
 </head>
 <body>
-    <div class="pantalla-carga" id="pantallaCarga">
-        <div class="cargador"></div>
-        <div class="mensaje-carga">¡Hola! Soy Milo 🐾 Estamos preparando tu espacio seguro...</div>
-    </div>
-
+   
     <div class="container">
         <header>
             <div class="logo">
@@ -826,7 +778,6 @@
 
     <script>
         // Elementos del DOM
-        const pantallaCarga = document.getElementById('pantallaCarga');
         const modoToggle = document.getElementById('modoToggle');
         const modoTexto = document.getElementById('modoTexto');
         const btnHablar = document.getElementById('btnHablar');
