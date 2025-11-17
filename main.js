@@ -10,4 +10,8 @@ async function runAI() {
  document.getElementById("respuesta").innerHTML =
 marked.parse(data.output_text) || JSON.stringify(data, null, 2);
 
+const data = await response.json();
+const respuesta = data.output_text; 
+simularRespuestaHope(respuesta)
+
 }
