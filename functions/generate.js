@@ -30,7 +30,7 @@ export async function onRequestPost(context) {
     {
       role: "system",
       content:
-        "Eres un doctor experto en nutrición. Responde como un asistente experimentado, recuerda todo lo que el usuario te ha dicho previamente de manera concisa." + "Procura saludar una única vez"
+        "Eres un doctor experto en nutrición. Responde como un asistente experimentado, recuerda todo lo que el usuario te ha dicho previamente de manera concisa." + "No realices saludos automáticos, nunca"
     },
     ...recentMemory,
     { role: "user", content: mensaje }
