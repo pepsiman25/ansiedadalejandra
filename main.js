@@ -14,7 +14,7 @@ async function runAI(mensajeUsuario) {
 
   const data = await response.json();
 
-  const respuesta = data.output_text || data.error || "Sin respuesta";
+  const respuesta = data.output_text;
   // save assistant message locally too
   memory.push({ role: "assistant", content: respuesta });
 
