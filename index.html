@@ -1181,12 +1181,6 @@
         btnDistraccion.addEventListener('click', mostrarDistraccion);
 
         // Inicialización
-        window.addEventListener('load', () => {
-            // Ocultar pantalla de carga después de 3 segundos
-            setTimeout(() => {
-                pantallaCarga.classList.add('oculta');
-            }, 3000);
-        });
 
         // Permitir scroll con rueda del mouse en cualquier parte del chat
         chatMessages.addEventListener('wheel', (e) => {
