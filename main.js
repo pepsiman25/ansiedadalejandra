@@ -1,21 +1,21 @@
 async function runAI(mensajeUsuario) {
+    try {
+        const response = await fetch("/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mensaje: mensajeUsuario })
+        });
 
-    const response = await fetch("/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            mensaje: mensajeUsuario   // O mensajeInput.value.trim()
-        })
-    });
+        const data = await response.json();
 
-    const data = await response.json();
-    console.log("Respuesta del servidor:", data);
+        document.getElementById("respuesta").innerHTML =
+            data.output_text || "Sin respuesta";
+        
+        simularRespuestaHope(data.output_text);
 
-    const respuesta = data.output_text || "No llegó output_text";
+    } catch (err) {
+        console.error("Error en runAI:", err);
+        document.getElementById("respuesta").innerHTML = "Error al conectar con la IA.";
+    }
+}
 
-    // Enviar al chat
-    document.getElementById("respuesta").innerHTML = marked.parse(respuesta);
-
-    // Enviar a lu función de IA
-    simularRespuestaHope(respuesta);
-  }
