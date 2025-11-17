@@ -1,10 +1,8 @@
-let memory = [];
 export async function onRequestPost(context) {
   const { mensaje, history } = await context.request.json();
-    memory.push({ role: "user", content: mensaje }); //memory
-  let prompt = `"${mensaje}".`
-  .trim();
-  
+
+  const prompt = mensaje.trim();
+
   // Workers AI
   const response = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${context.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b`,
@@ -16,28 +14,28 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         messages: [
-          { role: "system", content: "Eres un doctor experto en nutrición. Responde como un asistente experimentado, procurando la salud del usuario."
-           },
-           ...memory,
+          {
+            role: "system",
+            content: "Eres un doctor experto en nutrición. Responde como un asistente experimentado, procurando la salud del usuario."
+          },
+          ...history,                     // ← MEMORIA ENVIADA DESDE main.js
           { role: "user", content: prompt }
         ],
-        max_tokens: 1000,
+        max_tokens: 5000,
         skip_thinking: true,
         temperature: 0.7
       })
     }
   );
 
-  const data = await response.json(); 
-  
+  const data = await response.json();
+
   // Remove any <think> that leaks
   let output = data.result.response || "";
   output = output.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
-  // Store AI reply in memory
-  memory.push({ role: "assistant", content: output });
 
   return new Response(
-    JSON.stringify({ output_text: output }), // output text name variable
+    JSON.stringify({ output_text: output }),
     { headers: { "Content-Type": "application/json" } }
   );
 }
