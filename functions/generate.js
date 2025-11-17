@@ -1,6 +1,6 @@
 let memory = [];
 export async function onRequestPost(context) {
-  const { mensaje } = await context.request.json();
+  const { mensaje, history } = await context.request.json();
     memory.push({ role: "user", content: mensaje }); //memory
   let prompt = `"${mensaje}".`
   .trim();
