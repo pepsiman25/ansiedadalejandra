@@ -1,7 +1,7 @@
 export async function onRequestPost(context) {
-  const { mensajeInput } = await context.request.json();
+  const { mensaje } = await context.request.json();
 
-  let prompt = `Escribe una receta breve de jugo natural para "${mensajeInput}".
+  let prompt = `Escribe una receta breve de jugo natural para "${mensaje}".
   `.trim();
   
   // Workers AI

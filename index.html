@@ -733,7 +733,7 @@
                     </div>
                     <div class="chat-input">
                         <input type="text" id="mensajeInput" placeholder="Escribe cómo te sientes..." autocomplete="off">
-                        <button id="enviarMensaje" onclick="runAI()">Enviar</button>
+                        <button id="enviarMensaje">Enviar</button>
                     </div>
                 </div>
             </div>
@@ -892,8 +892,8 @@
                 agregarMensaje('Tú', mensaje, true);
                 mensajeInput.value = '';
                 
-                // Simular respuesta de Hope después de un breve retraso
-                setTimeout(() => simularRespuestaHope(mensaje), 1200);
+            // call AI instead of a fake delay
+            runAI(mensaje);
             }
         }
 

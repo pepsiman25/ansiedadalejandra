@@ -1,10 +1,8 @@
-async function runAI() {
-  const mensajeInput = document.getElementById("mensajeInput").value;
-
-  const response = await fetch("/generate", {
+async function runAI(mensajeUsuario) {
+    const response = await fetch("/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mensajeInput })
+    body: JSON.stringify({ mensaje : mensajeInput })
   });
 
  document.getElementById("respuesta").innerHTML =
