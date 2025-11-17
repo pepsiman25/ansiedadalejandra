@@ -1,7 +1,7 @@
 export async function onRequestPost(context) {
   const { mensaje, history } = await context.request.json();
 
-  const prompt = mensaje.trim();
+  let prompt = `"${mensaje}".`.trim();
 
   // Workers AI
   const response = await fetch(
