@@ -1,8 +1,6 @@
 export async function onRequestPost(context) {
   const { mensaje, history } = await context.request.json();
 
-  let prompt = `"${mensaje}".`.trim();
-
   // Workers AI
   const response = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${context.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b`,
@@ -16,10 +14,10 @@ export async function onRequestPost(context) {
         messages: [
           {
             role: "system",
-            content: "Eres un doctor experto en nutrición. Responde como un asistente experimentado, procurando la salud del usuario."
+            content:
+              "Eres un doctor experto en nutrición. Responde como un asistente experimentado."
           },
-          ...history,                     // ← MEMORIA ENVIADA DESDE main.js
-          { role: "user", content: prompt }
+          ...history, // YA INCLUYE EL MENSAJE DEL USUARIO
         ],
         max_tokens: 5000,
         skip_thinking: true,
@@ -30,8 +28,8 @@ export async function onRequestPost(context) {
 
   const data = await response.json();
 
-  // Remove any <think> that leaks
-  let output = data.result.response || "";
+  let output = data?.result?.response || "";
+
   output = output.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
 
   return new Response(
