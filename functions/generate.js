@@ -27,6 +27,9 @@ export async function onRequestPost(context) {
   );
 
   const data = await response.json();
+  
+  // DEBUG: show exactly what Cloudflare AI returns
+  console.log("DEBUG RAW WORKER RESPONSE:", JSON.stringify(data));
 
   let output = data?.result?.response || "";
 
