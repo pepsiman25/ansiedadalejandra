@@ -7,11 +7,9 @@ async function runAI(mensajeUsuario) {
         });
 
         const data = await response.json();
-
-        document.getElementById("respuesta").innerHTML =
-            data.output_text || "Sin respuesta";
+        const respuesta = data.output_text;
         
-        simularRespuestaHope(data.output_text);
+        simularRespuestaHope(respuesta);
 
     } catch (err) {
         console.error("Error en runAI:", err);
