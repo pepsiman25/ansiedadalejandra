@@ -33,7 +33,7 @@ export async function onRequestPost(context) {
   output = output.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
 
   return new Response(
-    JSON.stringify({ output_text: respuesta }), // output text name variable
+    JSON.stringify({ output_text: output }), // output text name variable
     { headers: { "Content-Type": "application/json" } }
   );
 }
