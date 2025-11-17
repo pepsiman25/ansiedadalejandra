@@ -1,13 +1,15 @@
 let memory = [];
+const userId = localStorage.getItem("userId") || crypto.randomUUID();
+localStorage.setItem("userId", userId);
+
 async function runAI(mensajeUsuario) {
   const response = await fetch("/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mensaje: mensajeUsuario, history: memory })
+    body: JSON.stringify({ mensaje: mensajeUsuario, userId })
   });
 
   const text = await response.text();
-  console.log("RAW RESPONSE FROM WORKER:", text);
 
   let data;
   try {
@@ -18,6 +20,8 @@ async function runAI(mensajeUsuario) {
   }
 
   const respuesta = data.output_text || "Sin respuesta";
+
+  memory.push({ role: "user", content: mensajeUsuario });
   memory.push({ role: "assistant", content: respuesta });
 
   simularRespuestaHope(respuesta);

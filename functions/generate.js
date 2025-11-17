@@ -1,25 +1,40 @@
-let memory = [];
+// En memoria temporal (puede luego ser KV para persistencia por usuario)
+let memory = {}; // memoria por userId
 
 export async function onRequestPost(context) {
   let body;
 
-  // Parseamos JSON de forma segura
   try {
     body = await context.request.json();
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Invalid JSON in request" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Invalid JSON in request" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const { mensaje, history } = body;   // history puede venir o no
+  const { mensaje, userId } = body;
+  if (!userId) return new Response(JSON.stringify({ error: "No userId provided" }), { status: 400 });
 
-  // Agregar mensaje a memoria local
-  memory.push({ role: "user", content: mensaje });
+  // Inicializar memoria del usuario si no existe
+  if (!memory[userId]) memory[userId] = [];
 
-  // Construcción del prompt final
-  const prompt = mensaje.trim();
+  // Agregar mensaje del usuario a memoria
+  memory[userId].push({ role: "user", content: mensaje });
+
+  // Resumir memoria si es muy larga (ej. últimos 10 mensajes)
+  let recentMemory = memory[userId].slice(-10);
+
+  // Construir prompt para la IA
+  const messages = [
+    {
+      role: "system",
+      content:
+        "Eres un doctor experto en nutrición. Responde como un asistente experimentado, recuerda todo lo que el usuario te ha dicho previamente de manera concisa."
+    },
+    ...recentMemory,
+    { role: "user", content: mensaje }
+  ];
 
   // Llamada al modelo de Cloudflare AI
   const response = await fetch(
@@ -28,35 +43,25 @@ export async function onRequestPost(context) {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${context.env.CLOUDFLARE_AI_TOKEN}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        messages: [
-          {
-            role: "system",
-            content:
-              "Eres un doctor experto en nutrición. Responde como un asistente experimentado que procura la salud del usuario."
-          },
-          ...memory,
-          { role: "user", content: prompt }
-        ],
+        messages,
         max_tokens: 5000,
         skip_thinking: true,
-        temperature: 0.7
-      })
+        temperature: 0.7,
+      }),
     }
   );
 
   const data = await response.json();
-
-  // Extraemos respuesta del modelo
   let output = data?.result?.response || "";
-
-  // Eliminar <think>
   output = output.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
 
-  return new Response(
-    JSON.stringify({ output_text: output }),
-    { headers: { "Content-Type": "application/json" } }
-  );
+  // Guardar respuesta de la IA en memoria
+  memory[userId].push({ role: "assistant", content: output });
+
+  return new Response(JSON.stringify({ output_text: output }), {
+    headers: { "Content-Type": "application/json" },
+  });
 }
