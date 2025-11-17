@@ -1,3 +1,4 @@
+let memory = [];
 async function runAI(mensajeUsuario) {
   const response = await fetch("/generate", {
     method: "POST",
