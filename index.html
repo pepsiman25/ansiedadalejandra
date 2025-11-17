@@ -890,6 +890,7 @@
             const mensaje = mensajeInput.value.trim();
             if (mensaje) {
                 agregarMensaje('Tú', mensaje, true);
+                memory.push({ origen: "Usuario", texto: mensaje }); //memoria
                 mensajeInput.value = '';
                 
             // call AI instead of a fake delay

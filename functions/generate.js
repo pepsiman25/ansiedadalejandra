@@ -19,6 +19,7 @@ export async function onRequestPost(context) {
            },
           { role: "user", content: prompt }
         ],
+        history: memory,
         max_tokens: 1000,
         skip_thinking: true,
         temperature: 0.7
