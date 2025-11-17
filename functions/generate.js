@@ -1,6 +1,7 @@
+let memory = [];
 export async function onRequestPost(context) {
-  const { mensaje, history } = await context.request.json();
-
+  const { mensaje } = await context.request.json();
+    memory.push({ role: "user", content: mensaje }); //memory
   let prompt = `Escribe una receta breve de jugo natural para "${mensaje}".
   `.trim();
   
@@ -17,7 +18,7 @@ export async function onRequestPost(context) {
         messages: [
           { role: "system", content: "Eres un doctor experto en nutrición. Responde como un asistente experimentado, procurando la salud del usuario."
            },
-           history,
+           ...memory,
           { role: "user", content: prompt }
         ],
         max_tokens: 1000,
@@ -32,6 +33,8 @@ export async function onRequestPost(context) {
   // Remove any <think> that leaks
   let output = data.result.response || "";
   output = output.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+  // Store AI reply in memory
+  memory.push({ role: "assistant", content: output });
 
   return new Response(
     JSON.stringify({ output_text: output }), // output text name variable
