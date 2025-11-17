@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hope IA - Asistente para Crisis de Ansiedad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- 1. Variables y Configuración Global --- */
+        :root {
+            --color-principal: #FF6B6B; /* Rojo vibrante */
+            --color-secundario: #4ECDC4; /* Turquesa brillante */
+            --color-acento: #FFD166; /* Amarillo vibrante */
+            --color-auxiliar: #9B5DE5; /* Púrpura vibrante */
+            --color-milo-base: #FFA07A; /* Salmón Claro para el cuerpo de Milo */
+            --color-milo-rayas: #FF8C00; /* Naranja Oscuro para rayas */
+            --color-milo-blanco: #FFFFFF; /* Blanco para pecho y hocico */
+            --color-milo-base-milo: #FFA07A;
+            --color-milo-rayas-milo: #FF8C00;
+            --color-milo-blanco-milo: #FFFFFF;
+            --color-milo-negro-milo: #2D3748;
+            --fondo-claro: #F7F9FC;
+            --texto-oscuro: #2D3748;
+            --sombra: rgba(0, 0, 0, 0.15);
+            --transicion: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .modo-oscuro {
+            --color-principal: #FF8A8A;
+            --color-secundario: #6CE5E5;
+            --color-acento: #FFE166;
+            --color-auxiliar: #B18AFF;
+            --color-milo-base: #9A634E;
+            --color-milo-rayas: #CC8400;
+            --color-milo-blanco: #E0E0E0;
+            --fondo-claro: #1F2532;
+            --texto-oscuro: #E0E0E0;
+            --sombra: rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: color var(--transicion), background-color var(--transicion), box-shadow var(--transicion);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--fondo-claro);
+            color: var(--texto-oscuro);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* --- 2. Header y Logo --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-family: 'Lora', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario), var(--color-auxiliar));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* Botón de Modo Oscuro */
+        .modo-toggle {
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--sombra);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modo-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--sombra);
+        }
+
+        /* --- 3. Contenedor de Chat --- */
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            background: var(--color-milo-blanco);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px var(--sombra);
+            overflow: hidden;
+            display: flex;
+        }
+        .chat-interface{
+            height: 100% !important;
+        }
+        .modo-oscuro .chat-container {
+            background: #2D3748;
+        }
+
+        /* --- 4. Sidebar de Milo (El Gato) --- */
+        .milo-sidebar {
+            width: 35%;
+            background: linear-gradient(160deg, var(--color-milo-base), var(--color-acento));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modo-oscuro .milo-sidebar {
+            background: linear-gradient(160deg, var(--color-milo-base), var(--color-acento));
+        }
+
+        /* Dibujo de Milo basado en la imagen */
+        .milo-character {
+            width: 180px;
+            height: 180px;
+            position: relative;
+            margin-top: 30px;
+            animation: flotar 4s ease-in-out infinite;
+        }
+        
+        .milo-cuerpo-base {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--color-milo-base);
+            border-radius: 50%;
+            clip-path: polygon(0 30%, 100% 30%, 100% 100%, 0 100%);
+        }
+        
+        .milo-cabeza {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-milo-base-milo);
+            border-radius: 50% 50% 45% 45%;
+        }
+
+        .milo-oreja-izq, .milo-oreja-der {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            background: var(--color-milo-base-milo);
+            border-radius: 50% 50% 0 0;
+            top: -15px;
+            z-index: -1;
+        }
+        
+        .milo-oreja-izq { left: 15px; transform: rotate(-10deg); }
+        .milo-oreja-der { right: 15px; transform: rotate(10deg); }
+
+        .milo-interior-oreja {
+            position: absolute;
+            width: 20px;
+            height: 30px;
+            background: var(--color-milo-blanco-milo);
+            border-radius: 50% 50% 0 0;
+            top: 10px;
+            left: 10px;
+        }
+        
+        .milo-oreja-der .milo-interior-oreja { left: 10px; }
+        
+        /* Rayas */
+        .milo-raya-frente {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 40px;
+            background: var(--color-milo-rayas);
+            border-radius: 50%;
+        }
+        
+        /* Pecho Blanco */
+        .milo-pecho {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 70px;
+            background: var(--color-milo-blanco-milo);
+            border-radius: 50%;
+            z-index: 1;
+            border: 5px solid var(--color-milo-base-milo);
+        }
+
+        /* Ojos grandes y negros */
+        .milo-ojo-base {
+            position: absolute;
+            top: 60px;
+            width: 45px;
+            height: 45px;
+            background: var(--color-milo-negro-milo);
+            border-radius: 50%;
+        }
+
+        .milo-ojo-izq { left: 30px; }
+        .milo-ojo-der { right: 30px; }
+
+        /* Brillitos en los ojos */
+        .milo-brillo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .milo-nariz {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 10px;
+            background: #FFB6C1; /* Rosa claro */
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            z-index: 2;
+        }
+
+        .milo-boca {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            border-bottom: 2px solid #FF8C00;
+            border-radius: 0 0 50% 50%;
+        }
+        
+        .milo-cola {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 80px;
+            background: var(--color-milo-base-milo);
+            border-radius: 50% 0 0 50%;
+            transform: rotate(-15deg);
+            animation: mover-cola 3s ease-in-out infinite;
+            z-index: -2;
+            border-left: 5px solid var(--color-milo-rayas-milo);
+        }
+
+        /* Animaciones */
+        @keyframes flotar {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes mover-cola {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(-5deg); }
+        }
+
+        .milo-mensaje {
+            background: var(--color-milo-blanco);
+            color: var(--texto-oscuro);
+            padding: 10px 15px;
+            border-radius: 15px 15px 15px 0;
+            margin-top: 30px;
+            box-shadow: 0 4px 10px var(--sombra);
+            position: relative;
+            max-width: 90%;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .milo-mensaje::before {
+            content: "miau";
+            position: absolute;
+            top: -25px;
+            left: 10px;
+            background: var(--color-acento);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            animation: flotar-texto 2s infinite;
+        }
+
+        .modo-oscuro .milo-mensaje {
+            background: #4A5568;
+            color: var(--texto-claro);
+        }
+
+        @keyframes flotar-texto {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(-5px); opacity: 0.8; }
+        }
+
+        /* --- 5. Área de Chat y Mensajes --- */
+        .chat-area {
+            width: 65%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .chat-messages-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background: var(--fondo-claro);
+            height: 85% !important;
+        }
+
+        .chat-messages {
+            height: 100%;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        /* Estilos personalizados para la barra de scroll */
+        .chat-messages::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--color-principal);
+            border-radius: 10px;
+            border: 2px solid var(--fondo-claro);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--color-auxiliar);
+        }
+
+        .modo-oscuro .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modo-oscuro .chat-messages::-webkit-scrollbar-thumb {
+            border: 2px solid #2D3748;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+            color: white;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .hope-message {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 0 15px 15px 15px;
+        }
+
+        .modo-oscuro .hope-message {
+            background-color: #3A4456;
+            color: var(--texto-claro);
+            border: 1px solid rgba(255, 138, 138, 0.3);
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            padding: 15px 0 0;
+            margin-top: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid var(--color-principal);
+            border-radius: 50px;
+            background: white;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-family: 'Poppins', sans-serif;
+            color: var(--texto-oscuro);
+            font-size: 1rem;
+        }
+
+        .modo-oscuro .chat-input input {
+            background: #2D3748;
+            color: var(--texto-claro);
+            border-color: var(--color-principal);
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--sombra);
+            transition: var(--transicion);
+            font-size: 1rem;
+        }
+
+        .chat-input button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--sombra);
+        }
+
+        .iniciar-chat {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .btn-hablar {
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 8px 25px var(--sombra);
+            transition: var(--transicion);
+        }
+
+        .btn-hablar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px var(--sombra);
+        }
+
+        .oculto { display: none !important; }
+
+        /* --- 6. Herramientas de Emergencia --- */
+        .herramientas-emergencia {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px var(--sombra);
+            margin-top: 20px;
+        }
+
+        .modo-oscuro .herramientas-emergencia {
+            background: #2D3748;
+            color: var(--texto-claro);
+        }
+
+        .herramientas-emergencia h2 {
+            font-family: 'Lora', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .herramientas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .herramienta {
+            background: linear-gradient(135deg, var(--color-auxiliar), var(--color-secundario));
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transicion);
+            box-shadow: 0 5px 15px var(--sombra);
+        }
+
+        .herramienta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--sombra);
+        }
+
+        .herramienta h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .herramienta p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* --- 7. Sobre Nosotros y Footer --- */
+        .sobre-nosotros {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px var(--sombra);
+            margin-top: 20px;
+        }
+
+        .modo-oscuro .sobre-nosotros {
+            background: #2D3748;
+            color: var(--texto-claro);
+        }
+
+        .sobre-nosotros h2 {
+            font-family: 'Lora', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .sobre-nosotros p {
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--texto-oscuro);
+            font-size: 0.9rem;
+            padding: 20px;
+            opacity: 0.7;
+        }
+
+        .modo-oscuro footer {
+            color: var(--texto-claro);
+        }
+
+        /* --- 8. Pantalla de Carga (Estilos para la inicialización) --- */
+        .pantalla-carga {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color-principal), var(--color-secundario), var(--color-auxiliar));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+
+        .pantalla-carga.oculta {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .mensaje-carga {
+            color: white;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Lora', serif;
+            z-index: 10;
+        }
+
+        .cargador {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: girar 1s linear infinite;
+        }
+
+        @keyframes girar {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- 9. Estilos para ejercicios --- */
+        .ejercicio-activo {
+            background: linear-gradient(135deg, var(--color-acento), var(--color-secundario));
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .contador-respiracion {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--color-principal);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .instrucciones {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .boton-detener {
+            background: var(--color-principal);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: var(--transicion);
+        }
+
+        .boton-detener:hover {
+            background: var(--color-auxiliar);
+            transform: translateY(-2px);
+        }
+
+        /* --- 10. Indicador de scroll --- */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--color-principal);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: var(--transicion);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 1.2rem;
+        }
+
+        .scroll-indicator:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            background: var(--color-auxiliar);
+        }
+
+        /* --- 11. Mensaje de bienvenida --- */
+        .mensaje-bienvenida {
+            text-align: center;
+            padding: 20px;
+            color: var(--color-principal);
+            font-style: italic;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pantalla-carga" id="pantallaCarga">
+        <div class="cargador"></div>
+        <div class="mensaje-carga">¡Hola! Soy Milo 🐾 Estamos preparando tu espacio seguro...</div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-img oculto"></div> 
+                <h1>Hope IA</h1>
+            </div>
+            <button class="modo-toggle" id="modoToggle">
+                <span id="modoTexto">Modo Oscuro</span>
+            </button>
+        </header>
+
+        <div class="chat-container">
+            <div class="milo-sidebar">
+                <div class="milo-character">
+                    <div class="milo-cuerpo-base"></div>
+                    <div class="milo-cola"></div>
+                    <div class="milo-cabeza">
+                        <div class="milo-oreja-izq"><div class="milo-interior-oreja"></div></div>
+                        <div class="milo-oreja-der"><div class="milo-interior-oreja"></div></div>
+                        <div class="milo-raya-frente"></div>
+                    </div>
+                    <div class="milo-pecho"></div>
+                    <div class="milo-ojo-base milo-ojo-izq"><div class="milo-brillo"></div></div>
+                    <div class="milo-ojo-base milo-ojo-der"><div class="milo-brillo"></div></div>
+                    <div class="milo-nariz"></div>
+                    <div class="milo-boca"></div>
+                </div>
+                <div class="milo-mensaje">
+                    ¡Miau! Estoy aquí para ayudarte. Respira profundamente.
+                </div>
+            </div>
+            <div class="chat-area">
+                <div class="iniciar-chat" id="iniciarChat">
+                    <button class="btn-hablar" id="btnHablar">Hablar con Hope</button>
+                </div>
+                <div class="chat-interface oculto" id="chatInterface">
+                    <div class="chat-messages-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="mensaje-bienvenida">
+                                💬 Conversación con Hope - Puedes hacer scroll libremente
+                            </div>
+                        </div>
+                        <div class="scroll-indicator oculto" id="scrollIndicator" title="Ir al último mensaje">
+                            ↓
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="mensajeInput" placeholder="Escribe cómo te sientes..." autocomplete="off">
+                        <button id="enviarMensaje">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="herramientas-emergencia">
+            <h2>Herramientas para Crisis</h2>
+            <p>Si estás experimentando ansiedad o un ataque de pánico, estas herramientas pueden ayudarte:</p>
+            
+            <div class="herramientas-grid">
+                <div class="herramienta" id="btnRespiracion">
+                    <h3>Respiración Guiada</h3>
+                    <p>Ejercicio de respiración 4-7-8 para calmar el sistema nervioso</p>
+                </div>
+                <div class="herramienta" id="btn5Sentidos">
+                    <h3>Método 5-4-3-2-1</h3>
+                    <p>Conecta con tus sentidos para volver al presente</p>
+                </div>
+                <div class="herramienta" id="btnAfirmaciones">
+                    <h3>Afirmaciones Positivas</h3>
+                    <p>Frases para recordar tu fuerza y capacidad</p>
+                </div>
+                <div class="herramienta" id="btnDistraccion">
+                    <h3>Técnicas de Distracción</h3>
+                    <p>Ejercicios para redirigir tus pensamientos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sobre-nosotros">
+            <h2>Acerca de Hope IA</h2>
+            <p>
+                Hope IA es tu compañero en el manejo de la ansiedad y ataques de pánico. Estamos dedicados a ofrecer un espacio seguro y confidencial donde puedes encontrar herramientas inmediatas para calmar la ansiedad, junto con apoyo emocional continuo. Nuestro objetivo es ayudarte a desarrollar resiliencia, practicar técnicas de grounding y fortalecer tus habilidades de afrontamiento. Milo 🐾 siempre estará a tu lado.
+            </p>
+        </div>
+
+        <footer>
+            <p>Hope IA &copy; 2025 - Desarrollado para la salud mental y emocional.</p>
+            <p><strong>Nota:</strong> Esta aplicación no sustituye el consejo médico profesional. En caso de emergencia, contacta a servicios de salud mental.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Elementos del DOM
+        const pantallaCarga = document.getElementById('pantallaCarga');
+        const modoToggle = document.getElementById('modoToggle');
+        const modoTexto = document.getElementById('modoTexto');
+        const btnHablar = document.getElementById('btnHablar');
+        const iniciarChat = document.getElementById('iniciarChat');
+        const chatInterface = document.getElementById('chatInterface');
+        const chatMessages = document.getElementById('chatMessages');
+        const mensajeInput = document.getElementById('mensajeInput');
+        const enviarMensaje = document.getElementById('enviarMensaje');
+        const miloMensajeElement = document.querySelector('.milo-mensaje');
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        
+        // Botones de herramientas
+        const btnRespiracion = document.getElementById('btnRespiracion');
+        const btn5Sentidos = document.getElementById('btn5Sentidos');
+        const btnAfirmaciones = document.getElementById('btnAfirmaciones');
+        const btnDistraccion = document.getElementById('btnDistraccion');
+
+        // Variables para ejercicios activos
+        let ejercicioActivo = null;
+        let autoScroll = true;
+
+        // Alternar modo oscuro/claro
+        modoToggle.addEventListener('click', () => {
+            document.body.classList.toggle('modo-oscuro');
+            const esModoOscuro = document.body.classList.contains('modo-oscuro');
+            modoTexto.textContent = esModoOscuro ? 'Modo Claro' : 'Modo Oscuro';
+            
+            // Forzar redibujado del scroll
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollTop;
+            }, 100);
+        });
+
+        // Iniciar chat
+        btnHablar.addEventListener('click', () => {
+            iniciarChat.classList.add('oculto');
+            chatInterface.classList.remove('oculto');
+            mensajeInput.focus();
+            agregarMensaje('Hope IA', '¡Hola! Soy Hope. Estoy aquí para ayudarte. Si estás experimentando ansiedad o necesitas apoyo, puedes contarme cómo te sientes o usar las herramientas de emergencia. ¿En qué puedo ayudarte hoy?', false);
+        });
+
+        // Generar mensaje aleatorio para Milo (acompañamiento)
+        function generarMensajeMilo() {
+            const mensajes = [
+                "¡Miau! Recuerda que esto pasará, eres fuerte.",
+                "Tus sentimientos son válidos 🧡 Estoy aquí contigo.",
+                "Hope te está escuchando con atención 👂",
+                "Respira... es una buena estrategia para empezar.",
+                "¡Eres valiente por buscar ayuda!",
+                "Miau, te mando un ronroneo de apoyo.",
+                "Tómate tu tiempo, no hay prisa.",
+                "Estás haciendo lo correcto al cuidar de ti."
+            ];
+            return mensajes[Math.floor(Math.random() * mensajes.length)];
+        }
+
+        // Agregar mensaje al chat
+        function agregarMensaje(autor, texto, esUsuario) {
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.classList.add('message');
+            mensajeDiv.classList.add(esUsuario ? 'user-message' : 'hope-message');
+            mensajeDiv.innerHTML = `<strong>${autor}:</strong> ${texto}`;
+            chatMessages.appendChild(mensajeDiv);
+            
+            // Hacer scroll automático al final si está activado
+            if (autoScroll) {
+                scrollToBottom();
+            } else {
+                // Mostrar indicador de nuevos mensajes
+                scrollIndicator.classList.remove('oculto');
+            }
+            
+            // Actualizar mensaje de Milo tras la respuesta de Hope
+            if (!esUsuario) {
+                setTimeout(() => {
+                    miloMensajeElement.textContent = generarMensajeMilo();
+                }, 1000);
+            }
+        }
+
+        // Función para hacer scroll al final del chat
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            scrollIndicator.classList.add('oculto');
+        }
+
+        // Detectar cuando el usuario hace scroll manual
+        chatMessages.addEventListener('scroll', () => {
+            const isAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 50;
+            
+            if (isAtBottom) {
+                autoScroll = true;
+                scrollIndicator.classList.add('oculto');
+            } else {
+                autoScroll = false;
+                scrollIndicator.classList.remove('oculto');
+            }
+        });
+
+        // Botón para ir al último mensaje
+        scrollIndicator.addEventListener('click', scrollToBottom);
+        
+        // Simular respuesta de Hope para ansiedad y pánico
+        function simularRespuestaHope(mensajeUsuario) {
+            let respuesta;
+            
+            // Detectar palabras clave en el mensaje del usuario
+            const mensaje = mensajeUsuario.toLowerCase();
+            
+            if (mensaje.includes('ansiedad') || mensaje.includes('nervioso') || mensaje.includes('nerviosa')) {
+                respuesta = "Entiendo que estés experimentando ansiedad. Es una sensación abrumadora, pero pasará. ¿Te gustaría probar un ejercicio de respiración o prefieres hablar más sobre lo que sientes?";
+            } else if (mensaje.includes('pánico') || mensaje.includes('ataque') || mensaje.includes('emergencia')) {
+                respuesta = "Parece que estás teniendo una crisis intensa. Primero, recuerda que estás a salvo y esto pasará. ¿Puedes intentar nombrar 5 cosas que ves a tu alrededor? Esto puede ayudarte a conectar con el presente.";
+            } else if (mensaje.includes('miedo') || mensaje.includes('asustado') || mensaje.includes('asustada')) {
+                respuesta = "El miedo puede ser abrumador, pero es una emoción normal. ¿Puedes describir exactamente qué es lo que te da miedo? A veces, ponerle palabras ayuda a reducir su poder.";
+            } else if (mensaje.includes('respirar') || mensaje.includes('aire') || mensaje.includes('ahogo')) {
+                respuesta = "Si tienes dificultad para respirar, intenta el ejercicio de respiración 4-7-8: inhala por 4 segundos, mantén la respiración por 7, exhala por 8. ¿Quieres que te guíe?";
+            } else if (mensaje.includes('hola') || mensaje.includes('hi') || mensaje.includes('hey')) {
+                respuesta = "¡Hola! Me alegra que estés aquí. Soy Hope, tu asistente para el manejo de ansiedad. ¿Cómo te sientes hoy?";
+            } else {
+                // Respuestas generales de apoyo
+                const respuestasGenerales = [
+                    "Gracias por compartir eso conmigo. ¿Hay algo específico que crees que podría ayudarte a sentirte mejor en este momento?",
+                    "Entiendo por lo que estás pasando. A veces, simplemente aceptar lo que sentimos sin juzgarnos ya es un gran paso. ¿Qué necesitas en este momento?",
+                    "Es completamente normal sentirse así en situaciones difíciles. ¿Hay algún recuerdo o pensamiento positivo que puedas traer a tu mente ahora?",
+                    "Estoy aquí para apoyarte. ¿Te gustaría probar alguna de las técnicas de la sección de herramientas de emergencia?",
+                    "Lo que estás experimentando es real y válido. Recuerda que las emociones, aunque intensas, son temporales. ¿En qué puedo ayudarte ahora?",
+                    "Aprecio que estés compartiendo esto conmigo. ¿Hay alguna preocupación específica que te gustaría explorar juntos?",
+                    "Tu bienestar es importante. ¿Hay algo que normalmente te ayuda a sentirte mejor que podríamos intentar ahora?"
+                ];
+                respuesta = respuestasGenerales[Math.floor(Math.random() * respuestasGenerales.length)];
+            }
+            
+            agregarMensaje('Hope IA', respuesta, false);
+        }
+
+        // Enviar mensaje
+        function enviarMensajeUsuario() {
+            const mensaje = mensajeInput.value.trim();
+            if (mensaje) {
+                agregarMensaje('Tú', mensaje, true);
+                mensajeInput.value = '';
+                
+                // Simular respuesta de Hope después de un breve retraso
+                setTimeout(() => simularRespuestaHope(mensaje), 1200);
+            }
+        }
+
+        enviarMensaje.addEventListener('click', enviarMensajeUsuario);
+        mensajeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                enviarMensajeUsuario();
+            }
+        });
+
+        // Ejercicio de respiración guiada
+        function iniciarRespiracionGuiada() {
+            if (ejercicioActivo) detenerEjercicio();
+            
+            ejercicioActivo = 'respiracion';
+            const ejercicioDiv = document.createElement('div');
+            ejercicioDiv.classList.add('ejercicio-activo');
+            ejercicioDiv.innerHTML = `
+                <h3>Respiración 4-7-8 para Calmar la Ansiedad</h3>
+                <div class="instrucciones">Inhala por la nariz contando hasta 4...</div>
+                <div class="contador-respiracion" id="contadorRespiracion">4</div>
+                <div class="instrucciones" id="faseRespiracion">Mantén la respiración</div>
+                <button class="boton-detener" id="detenerRespiracion">Detener Ejercicio</button>
+            `;
+            chatMessages.appendChild(ejercicioDiv);
+            
+            // Hacer scroll para mostrar el ejercicio
+            scrollToBottom();
+            
+            document.getElementById('detenerRespiracion').addEventListener('click', detenerEjercicio);
+            
+            // Lógica del ejercicio de respiración
+            let fase = 0; // 0: inhalar, 1: mantener, 2: exhalar
+            let segundos = 4;
+            const contador = document.getElementById('contadorRespiracion');
+            const faseElemento = document.getElementById('faseRespiracion');
+            
+            const intervalo = setInterval(() => {
+                if (ejercicioActivo !== 'respiracion') {
+                    clearInterval(intervalo);
+                    return;
+                }
+                
+                segundos--;
+                contador.textContent = segundos;
+                
+                if (segundos === 0) {
+                    fase++;
+                    if (fase === 1) {
+                        faseElemento.textContent = "Mantén la respiración...";
+                        segundos = 7;
+                    } else if (fase === 2) {
+                        faseElemento.textContent = "Exhala lentamente...";
+                        segundos = 8;
+                    } else {
+                        fase = 0;
+                        faseElemento.textContent = "Inhala profundamente...";
+                        segundos = 4;
+                    }
+                    contador.textContent = segundos;
+                }
+            }, 1000);
+            
+            // Guardar referencia para poder detenerlo
+            ejercicioActivo = {
+                tipo: 'respiracion',
+                elemento: ejercicioDiv,
+                intervalo: intervalo
+            };
+        }
+
+        // Ejercicio de los 5 sentidos
+        function iniciar5Sentidos() {
+            if (ejercicioActivo) detenerEjercicio();
+            
+            ejercicioActivo = '5sentidos';
+            const ejercicioDiv = document.createElement('div');
+            ejercicioDiv.classList.add('ejercicio-activo');
+            ejercicioDiv.innerHTML = `
+                <h3>Método 5-4-3-2-1 para Grounding</h3>
+                <div class="instrucciones" id="instruccionSentidos">Nombra 5 cosas que puedes VER a tu alrededor</div>
+                <div class="contador-respiracion" id="contadorSentidos">5</div>
+                <button class="boton-detener" id="detenerSentidos">Detener Ejercicio</button>
+            `;
+            chatMessages.appendChild(ejercicioDiv);
+            
+            // Hacer scroll para mostrar el ejercicio
+            scrollToBottom();
+            
+            document.getElementById('detenerSentidos').addEventListener('click', detenerEjercicio);
+            
+            const instrucciones = [
+                "Nombra 5 cosas que puedes VER a tu alrededor",
+                "Nombra 4 cosas que puedes TOCAR o SENTIR",
+                "Nombra 3 cosas que puedes OÍR",
+                "Nombra 2 cosas que puedes OLER",
+                "Nombra 1 cosa que puedes SABOREAR"
+            ];
+            
+            let paso = 0;
+            const instruccionElemento = document.getElementById('instruccionSentidos');
+            const contador = document.getElementById('contadorSentidos');
+            
+            const intervalo = setInterval(() => {
+                if (ejercicioActivo !== '5sentidos') {
+                    clearInterval(intervalo);
+                    return;
+                }
+                
+                paso++;
+                if (paso < instrucciones.length) {
+                    instruccionElemento.textContent = instrucciones[paso];
+                    contador.textContent = 5 - paso;
+                } else {
+                    clearInterval(intervalo);
+                    instruccionElemento.textContent = "¡Excelente! Has completado el ejercicio. ¿Cómo te sientes ahora?";
+                    contador.textContent = "✓";
+                }
+            }, 10000); // 10 segundos por paso
+            
+            // Guardar referencia para poder detenerlo
+            ejercicioActivo = {
+                tipo: '5sentidos',
+                elemento: ejercicioDiv,
+                intervalo: intervalo
+            };
+        }
+
+        // Mostrar afirmaciones positivas
+        function mostrarAfirmaciones() {
+            if (ejercicioActivo) detenerEjercicio();
+            
+            ejercicioActivo = 'afirmaciones';
+            const afirmaciones = [
+                "Estoy a salvo en este momento.",
+                "Mis sentimientos son válidos y temporales.",
+                "Tengo las herramientas para manejar esto.",
+                "Soy más fuerte de lo que creo.",
+                "Cada respiración me calma.",
+                "Esto pasará, como todo pasa.",
+                "Merezco paz y tranquilidad.",
+                "Puedo superar este momento difícil.",
+                "Mi cuerpo sabe cómo calmarse.",
+                "Estoy haciendo lo mejor que puedo."
+            ];
+            
+            const ejercicioDiv = document.createElement('div');
+            ejercicioDiv.classList.add('ejercicio-activo');
+            ejercicioDiv.innerHTML = `
+                <h3>Afirmaciones para Momentos Difíciles</h3>
+                <div class="instrucciones" id="afirmacionActual">${afirmaciones[0]}</div>
+                <div class="contador-respiracion" id="contadorAfirmaciones">1/${afirmaciones.length}</div>
+                <button class="boton-detener" id="detenerAfirmaciones">Detener Ejercicio</button>
+            `;
+            chatMessages.appendChild(ejercicioDiv);
+            
+            // Hacer scroll para mostrar el ejercicio
+            scrollToBottom();
+            
+            document.getElementById('detenerAfirmaciones').addEventListener('click', detenerEjercicio);
+            
+            let indice = 0;
+            const afirmacionElemento = document.getElementById('afirmacionActual');
+            const contador = document.getElementById('contadorAfirmaciones');
+            
+            const intervalo = setInterval(() => {
+                if (ejercicioActivo !== 'afirmaciones') {
+                    clearInterval(intervalo);
+                    return;
+                }
+                
+                indice++;
+                if (indice < afirmaciones.length) {
+                    afirmacionElemento.textContent = afirmaciones[indice];
+                    contador.textContent = `${indice + 1}/${afirmaciones.length}`;
+                } else {
+                    clearInterval(intervalo);
+                    afirmacionElemento.textContent = "Espero que estas afirmaciones te hayan ayudado. Recuerda que eres más fuerte de lo que crees.";
+                    contador.textContent = "Completado";
+                }
+            }, 8000); // 8 segundos por afirmación
+            
+            // Guardar referencia para poder detenerlo
+            ejercicioActivo = {
+                tipo: 'afirmaciones',
+                elemento: ejercicioDiv,
+                intervalo: intervalo
+            };
+        }
+
+        // Mostrar técnicas de distracción
+        function mostrarDistraccion() {
+            if (ejercicioActivo) detenerEjercicio();
+            
+            agregarMensaje('Hope IA', 'Aquí tienes algunas técnicas de distracción que pueden ayudarte:', false);
+            
+            const tecnicas = [
+                "Cuenta hacia atrás desde 100 de 3 en 3",
+                "Nombra todos los países que conozcas en orden alfabético",
+                "Recita las letras de una canción que te guste",
+                "Describe en detalle un objeto que tengas cerca",
+                "Haz una lista de 10 cosas por las que estés agradecido",
+                "Juega a encontrar todos los objetos de un color específico en la habitación"
+            ];
+            
+            tecnicas.forEach((tecnica, index) => {
+                setTimeout(() => {
+                    agregarMensaje('Hope IA', `${index + 1}. ${tecnica}`, false);
+                }, (index + 1) * 1500);
+            });
+        }
+
+        // Detener cualquier ejercicio activo
+        function detenerEjercicio() {
+            if (ejercicioActivo) {
+                if (ejercicioActivo.intervalo) {
+                    clearInterval(ejercicioActivo.intervalo);
+                }
+                if (ejercicioActivo.elemento) {
+                    ejercicioActivo.elemento.remove();
+                }
+                ejercicioActivo = null;
+                agregarMensaje('Hope IA', 'Has detenido el ejercicio. ¿Cómo te sientes ahora?', false);
+            }
+        }
+
+        // Event listeners para las herramientas
+        btnRespiracion.addEventListener('click', iniciarRespiracionGuiada);
+        btn5Sentidos.addEventListener('click', iniciar5Sentidos);
+        btnAfirmaciones.addEventListener('click', mostrarAfirmaciones);
+        btnDistraccion.addEventListener('click', mostrarDistraccion);
+
+        // Inicialización
+        window.addEventListener('load', () => {
+            // Ocultar pantalla de carga después de 3 segundos
+            setTimeout(() => {
+                pantallaCarga.classList.add('oculta');
+            }, 3000);
+        });
+
+        // Permitir scroll con rueda del mouse en cualquier parte del chat
+        chatMessages.addEventListener('wheel', (e) => {
+            // Permitir el scroll natural
+        });
+
+        // Asegurar que el chat sea completamente scrollable
+        chatMessages.style.overflowY = 'auto';
+        chatMessages.style.height = '100%';
+    </script>
+</body>
+</html>
