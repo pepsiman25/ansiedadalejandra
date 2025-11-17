@@ -1,19 +1,13 @@
 async function runAI() {
-  document.getElementById("spinner").classList.remove("hidden");
-  const jugo = document.getElementById("jugo").value;
-  const enfermedad = document.getElementById("enfermedad").value;
+  const mensajeInput = document.getElementById("mensajeInput").value;
 
   const response = await fetch("/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jugo, enfermedad })
+    body: JSON.stringify({ mensajeInput })
   });
 
-  const data = await response.json();
-   document.getElementById("spinner").classList.add("hidden");
-
-
- document.getElementById("output").innerHTML =
+ document.getElementById("respuesta").innerHTML =
 marked.parse(data.output_text) || JSON.stringify(data, null, 2);
 
 }

@@ -1,12 +1,9 @@
 export async function onRequestPost(context) {
-  const { jugo, enfermedad } = await context.request.json();
+  const { mensajeInput } = await context.request.json();
 
-  let prompt = `Escribe una receta breve de jugo natural para "${jugo}".
+  let prompt = `Escribe una receta breve de jugo natural para "${mensajeInput}".
   `.trim();
   
-  if (enfermedad && enfermedad.trim() !== "") {
-  prompt += ` Toma "${enfermedad}" con mucha consideración.`;
-  }
   // Workers AI
   const response = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${context.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b`,
@@ -38,7 +35,7 @@ export async function onRequestPost(context) {
   output = output.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
 
   return new Response(
-    JSON.stringify({ output_text: output }),
+    JSON.stringify({ output_text: respuesta }), // output text name variable
     { headers: { "Content-Type": "application/json" } }
   );
 }

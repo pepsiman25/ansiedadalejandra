@@ -780,8 +780,8 @@
                         </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="mensajeInput" placeholder="Escribe cómo te sientes..." autocomplete="off">
-                        <button id="enviarMensaje">Enviar</button>
+                        <input type="text" id="mensajeInput" placeholder="Escribe cómo te sientes..." autocomplete="off"> //variables "mensajeInput"
+                        <button onclick="runAI()">Enviar</button>
                     </div>
                 </div>
             </div>
@@ -933,32 +933,7 @@
         function simularRespuestaHope(mensajeUsuario) {
             let respuesta;
             
-            // Detectar palabras clave en el mensaje del usuario
-            const mensaje = mensajeUsuario.toLowerCase();
-            
-            if (mensaje.includes('ansiedad') || mensaje.includes('nervioso') || mensaje.includes('nerviosa')) {
-                respuesta = "Entiendo que estés experimentando ansiedad. Es una sensación abrumadora, pero pasará. ¿Te gustaría probar un ejercicio de respiración o prefieres hablar más sobre lo que sientes?";
-            } else if (mensaje.includes('pánico') || mensaje.includes('ataque') || mensaje.includes('emergencia')) {
-                respuesta = "Parece que estás teniendo una crisis intensa. Primero, recuerda que estás a salvo y esto pasará. ¿Puedes intentar nombrar 5 cosas que ves a tu alrededor? Esto puede ayudarte a conectar con el presente.";
-            } else if (mensaje.includes('miedo') || mensaje.includes('asustado') || mensaje.includes('asustada')) {
-                respuesta = "El miedo puede ser abrumador, pero es una emoción normal. ¿Puedes describir exactamente qué es lo que te da miedo? A veces, ponerle palabras ayuda a reducir su poder.";
-            } else if (mensaje.includes('respirar') || mensaje.includes('aire') || mensaje.includes('ahogo')) {
-                respuesta = "Si tienes dificultad para respirar, intenta el ejercicio de respiración 4-7-8: inhala por 4 segundos, mantén la respiración por 7, exhala por 8. ¿Quieres que te guíe?";
-            } else if (mensaje.includes('hola') || mensaje.includes('hi') || mensaje.includes('hey')) {
-                respuesta = "¡Hola! Me alegra que estés aquí. Soy Hope, tu asistente para el manejo de ansiedad. ¿Cómo te sientes hoy?";
-            } else {
-                // Respuestas generales de apoyo
-                const respuestasGenerales = [
-                    "Gracias por compartir eso conmigo. ¿Hay algo específico que crees que podría ayudarte a sentirte mejor en este momento?",
-                    "Entiendo por lo que estás pasando. A veces, simplemente aceptar lo que sentimos sin juzgarnos ya es un gran paso. ¿Qué necesitas en este momento?",
-                    "Es completamente normal sentirse así en situaciones difíciles. ¿Hay algún recuerdo o pensamiento positivo que puedas traer a tu mente ahora?",
-                    "Estoy aquí para apoyarte. ¿Te gustaría probar alguna de las técnicas de la sección de herramientas de emergencia?",
-                    "Lo que estás experimentando es real y válido. Recuerda que las emociones, aunque intensas, son temporales. ¿En qué puedo ayudarte ahora?",
-                    "Aprecio que estés compartiendo esto conmigo. ¿Hay alguna preocupación específica que te gustaría explorar juntos?",
-                    "Tu bienestar es importante. ¿Hay algo que normalmente te ayuda a sentirte mejor que podríamos intentar ahora?"
-                ];
-                respuesta = respuestasGenerales[Math.floor(Math.random() * respuestasGenerales.length)];
-            }
+            respuesta = "respuesta"
             
             agregarMensaje('Hope IA', respuesta, false);
         }
