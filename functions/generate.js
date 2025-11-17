@@ -2,8 +2,8 @@ let memory = [];
 export async function onRequestPost(context) {
   const { mensaje } = await context.request.json();
     memory.push({ role: "user", content: mensaje }); //memory
-  let prompt = `Escribe una receta breve de jugo natural para "${mensaje}".
-  `.trim();
+  let prompt = `"${mensaje}".`
+  .trim();
   
   // Workers AI
   const response = await fetch(
