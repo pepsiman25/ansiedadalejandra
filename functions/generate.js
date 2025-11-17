@@ -1,5 +1,5 @@
 export async function onRequestPost(context) {
-  const { mensaje } = await context.request.json();
+  const { mensaje, history } = await context.request.json();
 
   let prompt = `Escribe una receta breve de jugo natural para "${mensaje}".
   `.trim();
@@ -17,9 +17,9 @@ export async function onRequestPost(context) {
         messages: [
           { role: "system", content: "Eres un doctor experto en nutrición. Responde como un asistente experimentado, procurando la salud del usuario."
            },
+           history,
           { role: "user", content: prompt }
         ],
-        history: memory,
         max_tokens: 1000,
         skip_thinking: true,
         temperature: 0.7
