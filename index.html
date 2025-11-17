@@ -732,8 +732,8 @@
                         </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="mensajeInput" placeholder="Escribe cómo te sientes..." autocomplete="off"> //variables "mensajeInput"
-                        <button onclick="runAI()">Enviar</button>
+                        <input type="text" id="mensajeInput" placeholder="Escribe cómo te sientes..." autocomplete="off">
+                        <button id="enviarMensaje" onclick="runAI()">Enviar</button>
                     </div>
                 </div>
             </div>
@@ -785,7 +785,7 @@
         const chatInterface = document.getElementById('chatInterface');
         const chatMessages = document.getElementById('chatMessages');
         const mensajeInput = document.getElementById('mensajeInput');
-        const enviarMensaje = document.getElementById('enviarMensaje');
+        const enviarMensaje = document.getElementById('enviarMensaje')
         const miloMensajeElement = document.querySelector('.milo-mensaje');
         const scrollIndicator = document.getElementById('scrollIndicator');
         
