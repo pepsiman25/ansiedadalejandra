@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <meta charset="UTF-8">
@@ -841,7 +840,7 @@
             const mensajeDiv = document.createElement('div');
             mensajeDiv.classList.add('message');
             mensajeDiv.classList.add(esUsuario ? 'user-message' : 'hope-message');
-            const textoConSaltos = marked.parse(texto); //para lineskip???
+            const html = marked.parse(texto); //para lineskip???
             mensajeDiv.innerHTML = `<strong>${autor}:</strong> ${texto}`;
             chatMessages.appendChild(mensajeDiv);
             
