@@ -836,22 +836,13 @@
         }
 
         // Agregar mensaje al chat
-    function agregarMensaje(autor, texto, esUsuario, esHTML = false) {
-    const mensajeDiv = document.createElement('div');
-    mensajeDiv.classList.add('message');
-    mensajeDiv.classList.add(esUsuario ? 'user-message' : 'hope-message');
-
-    // If it's HTML, insert as HTML
-    if (esHTML) {
-        mensajeDiv.innerHTML = `<strong>${autor}:</strong><br>${texto}`;
-    } 
-    // If it's user/plain text, escape it
-    else {
-        mensajeDiv.innerText = `${autor}: ${texto}`;
-    }
-
-    chatMessages.appendChild(mensajeDiv);
-}
+        function agregarMensaje(autor, texto, esUsuario) {
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.classList.add('message');
+            mensajeDiv.classList.add(esUsuario ? 'user-message' : 'hope-message');
+            const html = marked.parse(texto); //para lineskip???
+            mensajeDiv.innerHTML = `<strong>${autor}:</strong> ${texto}`;
+            chatMessages.appendChild(mensajeDiv);
             
             // Hacer scroll automático al final si está activado
             if (autoScroll) {
@@ -894,8 +885,7 @@
         // Simular respuesta de Hope para ansiedad y pánico
         
         function simularRespuestaHope(respuesta) {
-            const html = marked.parse(respuesta);   // <-- THIS turns markdown into HTML
-        agregarMensaje("Hope IA", html, false, true);   // send HTML
+            agregarMensaje('Hope IA', respuesta, false);
         }
 
         // Enviar mensaje
