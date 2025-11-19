@@ -685,7 +685,6 @@
     </style>
 </head>
 <body>
-   
     <div class="container">
         <header>
             <div class="logo">
@@ -724,6 +723,7 @@
                 <div class="chat-interface oculto" id="chatInterface">
                     <div class="chat-messages-container">
                         <div class="chat-messages" id="chatMessages">
+                                <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
                             <div class="mensaje-bienvenida">
                                 💬 Conversación con Hope - Puedes hacer scroll libremente
                             </div>
@@ -882,6 +882,7 @@
         scrollIndicator.addEventListener('click', scrollToBottom);
         
         // Simular respuesta de Hope para ansiedad y pánico
+        
         function simularRespuestaHope(respuesta) {
             agregarMensaje('Hope IA', respuesta, false);
         }
