@@ -841,6 +841,7 @@
             const mensajeDiv = document.createElement('div');
             mensajeDiv.classList.add('message');
             mensajeDiv.classList.add(esUsuario ? 'user-message' : 'hope-message');
+            const textoConSaltos = marked.parse(texto); //para lineskip???
             mensajeDiv.innerHTML = `<strong>${autor}:</strong> ${texto}`;
             chatMessages.appendChild(mensajeDiv);
             
