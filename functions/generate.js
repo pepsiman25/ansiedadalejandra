@@ -29,7 +29,7 @@ export async function onRequestPost(context) {
   const messages = [
     {
       role: "system",
-      content:
+      content: "No uses markdown, negrita, cursiva ni fórmulas" +
        "Eres asistente emocional. Responde como un asistente experimentado, realiza recomendaciones para ayudar al usuario en su situación, recuerda todo lo que el usuario te ha dicho previamente de manera concisa." + "No digas Hola, Buenos días o cualquier clase de saludo" + "Habla en español"
     },
     ...recentMemory,
