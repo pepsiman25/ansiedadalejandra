@@ -21,6 +21,7 @@ async function runAI(mensajeUsuario) {
 
   const respuesta = data.output_text || "Sin respuesta";
 
+  // Add to memory
   memory.push({ role: "user", content: mensajeUsuario });
   memory.push({ role: "assistant", content: respuesta });
 
