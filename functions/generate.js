@@ -1,9 +1,7 @@
 // En memoria temporal (puede luego ser KV para persistencia por usuario)
 let memory = {}; // memoria por userId
-
 export async function onRequestPost(context) {
   let body;
-
   try {
     body = await context.request.json();
   } catch (err) {
