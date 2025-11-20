@@ -47,7 +47,7 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         messages,
-        max_tokens: 5000,
+        max_tokens: 1000,
         skip_thinking: true,
         temperature: 0.7,
       }),
