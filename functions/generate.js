@@ -38,7 +38,7 @@ export async function onRequestPost(context) {
 
   // Llamada al modelo de Cloudflare AI
   const response = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${context.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b`,
+    `https://api.cloudflare.com/client/v4/accounts/${context.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/meta/llama-3.2-3b-instruct`,
     {
       method: "POST",
       headers: {
